@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sql-rag-demo
+  namespace: sql-rag
+  labels:
+    app: sql-rag-demo
+spec:
+  replicas: 2                      # needs sticky sessions at the Ingress (see below)
+  selector:
+    matchLabels:
+      app: sql-rag-demo
+  template:
+    metadata:
+      labels:
+        app: sql-rag-demo
+    spec:
+      containers:
+        - name: sql-rag-demo
+          image: replace   # set by CI / ArgoCD Image Updater
+          ports:
+            - containerPort: 8501
+          envFrom:
+            - configMapRef:
+                name: sql-rag-config      # AUTH_DB_HOST/PORT/NAME/USER, AUTH_DB_SSLMODE, AUTH_BACKEND
+            - secretRef:
+                name: sql-rag-secrets     # AUTH_DB_PASSWORD, GROQ_API_KEY
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"           # sentence-transformers + torch are heavy
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+      # If sslmode=verify-full, mount the RDS CA bundle:
+      #   volumeMounts: [{ name: rds-ca, mountPath: /etc/ssl/rds, readOnly: true }]
+      #   volumes: [{ name: rds-ca, configMap: { name: rds-ca-bundle } }]
+      #   and set AUTH_DB_SSLROOTCERT=/etc/ssl/rds/global-bundle.pem in the ConfigMap
