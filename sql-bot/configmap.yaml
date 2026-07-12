@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sql-rag-config
+  namespace: sql-rag
+  labels:
+    app: sql-rag-demo
+data:
+  # Non-secret auth-database settings (AWS RDS Postgres).
+  AUTH_BACKEND: "postgres"
+  AUTH_DB_HOST: "quantamvector.c3e2cg0ke5ph.ap-northeast-1.rds.amazonaws.com"
+  AUTH_DB_PORT: "5432"
+  AUTH_DB_NAME: "postgres"
+  AUTH_DB_USER: "quantamvector"
+  AUTH_DB_SSLMODE: "require"
+  # For sslmode=verify-full, also mount the RDS CA bundle and set:
+  # AUTH_DB_SSLROOTCERT: "/etc/ssl/rds/global-bundle.pem"
