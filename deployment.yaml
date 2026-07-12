@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: sql-rag-demo
-          image: manojkrishnappa/sql-bot:TAG   # set by CI / ArgoCD Image Updater
+          image: manojkrishnappa/sql-bot:eae5141a9847e16ba6a06595961219346d097725
           ports:
             - containerPort: 8501
           envFrom:
